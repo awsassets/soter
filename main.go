@@ -2,7 +2,6 @@ package main
 
 import (
 	"crypto/tls"
-	"encoding/base64"
 	"fmt"
 	"log"
 	"os"
@@ -129,13 +128,7 @@ func main() {
 			log.Fatalf("error loading channels from db: %s", err)
 		}
 
-		username := operuser
-		password, err := base64.StdEncoding.DecodeString(operpass)
-		if err != nil {
-			log.Fatalf("error decoding password: %s", err)
-		}
-
-		conn.SendRawf("OPER %s %s", username, password)
+		conn.SendRawf("OPER %s %s", operuser, operpass)
 
 		for _, channel := range channels {
 			conn.Join(channel.Name)
