@@ -1,0 +1,12 @@
+[submodule "vendor/github.com/asdine/storm"]
+	path = vendor/github.com/asdine/storm
+	url = https://github.com/asdine/storm
+[submodule "vendor/github.com/boltdb/bolt"]
+	path = vendor/github.com/boltdb/bolt
+	url = https://github.com/boltdb/bolt
+[submodule "vendor/github.com/namsral/flag"]
+	path = vendor/github.com/namsral/flag
+	url = https://github.com/namsral/flag
+[submodule "vendor/github.com/thoj/go-ircevent"]
+	path = vendor/github.com/thoj/go-ircevent
+	url = https://github.com/prologic/go-ircevent
