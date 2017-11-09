@@ -1,0 +1,10 @@
+version: "3.3"
+
+services:
+  soter:
+    image: prologic/soter
+    command: -dbpath /data/soter.db irc.freenode.net:6667
+    deploy:
+      restart_policy:
+        condition: on-failure
+      replicas: 1
