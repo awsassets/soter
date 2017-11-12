@@ -168,7 +168,10 @@ func main() {
 		}
 
 		if !mode.Equal(e.Arguments[2:]) {
+			log.Infof("Updating channel modes for %s to %s", mode.Channel, mode.Modes)
 			conn.Mode(mode.Channel, mode.Modes...)
+		} else {
+			log.Infof("Channel modes for %s in sync", mode.Channel)
 		}
 	})
 	conn.AddCallback("MODE", func(e *irc.Event) {
@@ -211,7 +214,10 @@ func main() {
 		}
 
 		if topic.Topic != e.Arguments[2] {
+			log.Infof("Updating channel topic for %s to %s", topic.Channel, topic.Topic)
 			conn.SendRawf("TOPIC %s :%s", topic.Channel, topic.Topic)
+		} else {
+			log.Infof("Channel topic for %s in sync", topic.Channel)
 		}
 	})
 	conn.AddCallback("TOPIC", func(e *irc.Event) {
@@ -254,8 +260,10 @@ func main() {
 			log.Fatalf("error looking up channel in db: %s", err)
 		}
 
-		conn.Join(e.Arguments[1])
-		conn.Mode(e.Arguments[1])
+		log.Infof("Requested to join %s", channel.Name)
+
+		conn.Join(channel.Name)
+		conn.Mode(channel.Name)
 	})
 
 	err = conn.Connect(addr.String())
