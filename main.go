@@ -3,11 +3,12 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/asdine/storm"
 	"github.com/namsral/flag"
@@ -92,6 +93,12 @@ func main() {
 
 	flag.Parse()
 
+	if debug {
+		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.WarnLevel)
+	}
+
 	if version {
 		fmt.Printf("soter v%s", FullVersion())
 		os.Exit(0)
@@ -112,7 +119,8 @@ func main() {
 	}
 	defer db.Close()
 
-	conn := irc.IRC(nickname, username, realname)
+	conn := irc.IRC(nickname, username)
+	conn.RealName = realname
 
 	conn.VerboseCallbackHandler = debug
 	conn.Debug = debug
@@ -122,21 +130,27 @@ func main() {
 	conn.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	conn.AddCallback("001", func(e *irc.Event) {
+		log.Info("Connected!")
+
 		var channels []Channel
+
 		err := db.All(&channels)
 		if err != nil {
 			log.Fatalf("error loading channels from db: %s", err)
 		}
 
+		log.Infof("Opering up with %s", operuser)
 		conn.SendRawf("OPER %s %s", operuser, operpass)
 
 		for _, channel := range channels {
 			conn.Join(channel.Name)
 			conn.Mode(channel.Name)
+			log.Infof("Joined %s", channel.Name)
 		}
 	})
 	conn.AddCallback("381", func(e *irc.Event) {
 		authed = true
+		log.Infof("Successfully opered up!")
 	})
 
 	conn.AddCallback("324", func(e *irc.Event) {
