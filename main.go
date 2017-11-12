@@ -96,7 +96,7 @@ func main() {
 	if debug {
 		log.SetLevel(log.DebugLevel)
 	} else {
-		log.SetLevel(log.WarnLevel)
+		log.SetLevel(log.InfoLevel)
 	}
 
 	if version {
