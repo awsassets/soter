@@ -154,49 +154,22 @@ func main() {
 	})
 
 	conn.AddCallback("324", func(e *irc.Event) {
-		var mode Mode
-
-		err = db.One("Channel", e.Arguments[1], &mode)
-		if err != nil && err == storm.ErrNotFound {
-			mode = NewMode(e.Arguments[1], e.Arguments[2:])
-			err := db.Save(&mode)
-			if err != nil {
-				log.Fatalf("error saving mode to db: %s", err)
-			}
-		} else if err != nil {
-			log.Fatalf("error looking up mode in db: %s", err)
-		}
-
-		if !mode.Equal(e.Arguments[2:]) {
-			log.Infof("Updating channel modes for %s to %s", mode.Channel, mode.Modes)
-			conn.Mode(mode.Channel, mode.Modes...)
-		} else {
-			log.Infof("Channel modes for %s in sync", mode.Channel)
-		}
+		log.Infof(
+			"Channel %s modes are %s",
+			e.Arguments[1],
+			strings.Join(e.Arguments[2:], " "),
+		)
 	})
 	conn.AddCallback("MODE", func(e *irc.Event) {
 		if e.Arguments[0][0] != '#' {
 			return
 		}
 
-		var mode Mode
-		err = db.One("Channel", e.Arguments[0], &mode)
-		if err != nil && err == storm.ErrNotFound {
-			mode = NewMode(e.Arguments[0], e.Arguments[1:])
-			err := db.Save(&mode)
-			if err != nil {
-				log.Fatalf("error saving mode to db: %s", err)
-			}
-		} else if err != nil {
-			log.Fatalf("error looking up mode in db: %s", err)
-		}
-
-		mode.AppendModes(e.Arguments[1:])
-
-		err := db.Save(&mode)
-		if err != nil {
-			log.Fatalf("error saving mode to db: %s", err)
-		}
+		log.Infof(
+			"Channel %s changed modes to %s",
+			e.Arguments[0],
+			strings.Join(e.Arguments[1:], " "),
+		)
 	})
 
 	conn.AddCallback("331", func(e *irc.Event) {
