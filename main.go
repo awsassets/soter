@@ -199,10 +199,24 @@ func main() {
 		}
 	})
 
+	conn.AddCallback("331", func(e *irc.Event) {
+		var topic Topic
+
+		err := db.One("Channel", e.Arguments[1], &topic)
+		if err != nil && err == storm.ErrNotFound {
+			return
+		} else if err != nil {
+			log.Fatalf("error looking up topic in db: %s", err)
+		}
+
+		log.Infof("Updating channel topic for %s to %s", topic.Channel, topic.Topic)
+		conn.SendRawf("TOPIC %s :%s", topic.Channel, topic.Topic)
+	})
+
 	conn.AddCallback("332", func(e *irc.Event) {
 		var topic Topic
 
-		err = db.One("Channel", e.Arguments[1], &topic)
+		err := db.One("Channel", e.Arguments[1], &topic)
 		if err != nil && err == storm.ErrNotFound {
 			topic = NewTopic(e.Arguments[1], e.Arguments[2])
 			err := db.Save(&topic)
@@ -220,6 +234,7 @@ func main() {
 			log.Infof("Channel topic for %s in sync", topic.Channel)
 		}
 	})
+
 	conn.AddCallback("TOPIC", func(e *irc.Event) {
 		var topic Topic
 		err = db.One("Channel", e.Arguments[0], &topic)
