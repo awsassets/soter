@@ -29,8 +29,8 @@ $ ./soter
 
 ## How it works
 
-- Soter will connet to a configured server.
-- Upon successfull connection, Soter will "Oper" up.
+- Soter will connect to a configured server.
+- Upon successfully connection, Soter will "Oper" up.
 - When Soter is invited to a channel; it will immediately join.
 - When Soter joins a channel for the first time it "Ops" itself.
 - Soter then maintains a persistent "memory" of the channel's topic and modes.
