@@ -36,6 +36,11 @@ $ ./soter
 - Soter then maintains a persistent "memory" of the channel's topic and modes.
 - Soter will also maintain channel operators in the case of disruption.
 
+## Related Projects
+
+* [cadmus](https://github.com/prologic/cadmus) -- an IRC Bot written in Go that logs IRC Channels and provides an interface to view and search those logs
+* [eris](https://github.com/prologic/eris) -- a modern IRC Server / Daemon written in Go that has a heavy focus on security and privacy
+
 ## License
 
 Soter is licensed under the MIT License.
